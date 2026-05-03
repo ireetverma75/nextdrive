@@ -18,4 +18,5 @@ export const files = sqliteTable("files", {
   publicId: text("publicId").notNull().unique(),
   uploadedBy: text("uploadedBy").notNull().references(() => users.id),
   createdAt: integer("createdAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`),
+  isTrashed: integer("isTrashed", { mode: 'boolean' }).default(false),
 });

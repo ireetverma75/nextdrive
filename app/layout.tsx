@@ -10,7 +10,7 @@ export const metadata = { title: "NextDrive", description: "Your Files, Next Lev
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100`}>
+      <body className={`${inter.className} apple-bg text-gray-900 dark:text-gray-100`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
           <Toaster position="bottom-right" />

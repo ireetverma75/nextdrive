@@ -4,7 +4,7 @@ import FileCard from "./FileCard";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
-export default function FileGrid() {
+export default function FileGrid({ tab = "home" }: { tab?: string }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
@@ -12,19 +12,19 @@ export default function FileGrid() {
   const fetchFiles = async (q = "") => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/files?q=${encodeURIComponent(q)}`);
+      const res = await fetch(`/api/files?q=${encodeURIComponent(q)}&tab=${tab}`);
       const data = await res.json();
       setFiles(data.files || []);
     } finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchFiles(); }, []);
+  useEffect(() => { fetchFiles(); }, [tab]);
 
   return (
     <div className="p-6">
       <div className="relative mb-6 max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-        <Input placeholder="Search files..." className="pl-9 bg-white dark:bg-gray-900" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === "Enter" && fetchFiles(query)} />
+        <Input placeholder="Search files..." className="pl-9 bg-white/20 dark:bg-black/20 backdrop-blur-lg border border-white/30 dark:border-white/10 shadow-sm focus-visible:ring-white/50 transition-all rounded-xl" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === "Enter" && fetchFiles(query)} />
       </div>
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -36,7 +36,7 @@ export default function FileGrid() {
         <div className="text-center py-20 text-gray-500">No files found. Upload your first file!</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {files.map((file: any) => <FileCard key={file.id} file={file} />)}
+          {files.map((file: any) => <FileCard key={file.id} file={file} tab={tab} />)}
         </div>
       )}
     </div>

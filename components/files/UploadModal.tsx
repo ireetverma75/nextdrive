@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Upload, X } from "lucide-react";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export default function UploadModal() {
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -35,7 +37,10 @@ export default function UploadModal() {
       if (!res.ok) throw new Error();
       toast.success("Uploaded successfully");
       handleClose();
-      window.location.reload();
+      
+      // Notify StorageBot and refresh Server Components
+      window.dispatchEvent(new Event("upload_complete"));
+      router.refresh();
     } catch (err: any) {
       if (err.name === "AbortError") {
         toast.info("Upload cancelled");

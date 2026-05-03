@@ -19,7 +19,7 @@ export default function Sidebar() {
   useEffect(() => setMounted(true), []);
 
   return (
-    <aside className="w-64 border-r border-gray-200 dark:border-gray-800 h-screen flex flex-col p-4 bg-white dark:bg-gray-900">
+    <aside className="w-64 border-r border-white/20 dark:border-white/10 h-screen flex flex-col p-4 bg-white/40 dark:bg-black/30 backdrop-blur-2xl shadow-2xl z-20 relative">
       <h1 className="text-xl font-bold mb-6 flex items-center gap-2">
         <HardDrive className="text-blue-600" /> NextDrive
       </h1>
