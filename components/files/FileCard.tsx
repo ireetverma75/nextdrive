@@ -59,7 +59,11 @@ export default function FileCard({ file, tab = "home" }: { file: any, tab?: stri
   };
 
   return (
-    <div className="group relative bg-white/50 dark:bg-black/40 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-xl p-4 shadow-lg hover:shadow-2xl hover:bg-white/60 dark:hover:bg-black/50 hover:-translate-y-1 transition-all duration-300 flex flex-col">
+    <div 
+      draggable={true}
+      onDragStart={(e) => { e.dataTransfer.setData('fileId', file.id); }}
+      className="group relative bg-white/50 dark:bg-black/40 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-xl p-4 shadow-lg hover:shadow-2xl hover:bg-white/60 dark:hover:bg-black/50 hover:-translate-y-1 transition-all duration-300 flex flex-col"
+    >
       <div className="h-32 bg-white/50 dark:bg-white/5 shadow-inner backdrop-blur-sm rounded-lg flex items-center justify-center mb-3">
         {getIcon()}
       </div>

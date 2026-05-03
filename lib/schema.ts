@@ -9,6 +9,15 @@ export const users = sqliteTable("users", {
   createdAt: integer("createdAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`),
 });
 
+export const folders = sqliteTable("folders", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  parentId: text("parentId"),
+  createdBy: text("createdBy").notNull().references(() => users.id),
+  createdAt: integer("createdAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`),
+  isTrashed: integer("isTrashed", { mode: 'boolean' }).default(false),
+});
+
 export const files = sqliteTable("files", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   filename: text("filename").notNull(),
@@ -17,6 +26,7 @@ export const files = sqliteTable("files", {
   size: integer("size").notNull(),
   publicId: text("publicId").notNull().unique(),
   uploadedBy: text("uploadedBy").notNull().references(() => users.id),
+  folderId: text("folderId"),
   createdAt: integer("createdAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`),
   isTrashed: integer("isTrashed", { mode: 'boolean' }).default(false),
 });

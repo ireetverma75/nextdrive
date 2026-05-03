@@ -1,0 +1,11 @@
+### main focus
+- inside the dashboard, allow upload by drag and drop in the main are where files are getting stored. 
+- add functionality of foldering such that either files or folders can be inserted within the main area of the dashboard.
+- add feature of realtime searching in the searchbar instead of searching on the click of enter.
+- instead of using the storage assistant component in the main area, it's funcitonality can be put inside the side bar in form of a small block that has the same layout as it has on clicking the assistant button. 
+- also rename that newly modified storage assistant block into avaialble storage. use a progress bar underneath which will show available storage as well as the storage consumed. fetch the data for avaialble storage from the api if possible.
+- also add the feature to delete the folder which will sent that folder to the trash, add the option to rename the folder if double clicked on the folder. also add the feature to drag the uploaded file to folder.
+- inside the trash tab, add the feature to permanently delete. add the option to restore folder and file.
+- in the folder add the feature to bring back the file to previous level by dragging that file to the "back" button. 
+- use a progress bar to show the upload progress of the file. 
+- make the folder name dynamic and the path to the folder should be shown above the main area in the dashboard. the user should be able to click on any part of the path to navigate to that folder.

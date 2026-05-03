@@ -21,10 +21,11 @@ export default function LoginPage() {
     const res = await signIn("credentials", { email, password, redirect: false });
     setLoading(false);
     
-    if (res?.error) {
-      toast.error("Invalid email or password");
+    if (res?.error || !res?.ok) {
+      toast.error(res?.error || "Invalid email or password");
     } else {
       toast.success("Successfully logged in");
+      router.refresh();
       router.push("/dashboard");
     }
   };

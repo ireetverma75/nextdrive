@@ -11,6 +11,7 @@ export async function POST(req: Request) {
 
     const formData = await req.formData();
     const file = formData.get("file") as any | null;
+    const folderId = formData.get("folderId") as string | null;
     if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
 
     const arrayBuffer = await file.arrayBuffer();
@@ -37,7 +38,8 @@ export async function POST(req: Request) {
       fileType: fileType,
       size: result.bytes,
       publicId: result.public_id,
-      uploadedBy: session.user.id
+      uploadedBy: session.user.id,
+      folderId: folderId && folderId !== "null" ? folderId : null,
     }).returning();
 
     return NextResponse.json({ file: newFiles[0] });

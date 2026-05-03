@@ -1,7 +1,6 @@
 import Sidebar from "@/components/layout/Sidebar";
 import FileGrid from "@/components/files/FileGrid";
 import UploadModal from "@/components/files/UploadModal";
-import StorageBot from "@/components/layout/StorageBot";
 
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const params = await searchParams;
@@ -17,7 +16,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         </div>
         <FileGrid tab={tab} />
       </main>
-      <StorageBot />
     </div>
   );
 }

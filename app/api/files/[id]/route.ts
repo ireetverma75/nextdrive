@@ -40,7 +40,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const session = await auth();
     if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { action } = await req.json();
+    const { action, folderId } = await req.json();
 
     const fileSet = await db.select().from(files).where(eq(files.id, id));
     const file = fileSet[0];
@@ -51,6 +51,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     if (action === "restore") {
       await db.update(files).set({ isTrashed: false }).where(eq(files.id, id)).returning();
+    } else if (action === "move") {
+      await db.update(files).set({ folderId: folderId || null }).where(eq(files.id, id)).returning();
     }
 
     return NextResponse.json({ success: true });
