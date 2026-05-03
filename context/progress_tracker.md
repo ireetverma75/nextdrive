@@ -13,6 +13,8 @@
 - **File Sharing Integration:** Added features allowing users to seamlessly share files via Email and WhatsApp.
 - **Security & Routing:** Configured `middleware.ts` to correctly handle NextAuth v5 session cookies (`authjs.session-token`) and protect the `/dashboard` routes.
 - **Code Quality:** Resolved TypeScript compilation errors (e.g., in `upload/route.ts`), established `.gitignore` rules for editor configs, and improved overall project linting.
+- **UI Enhancements:** Replaced static back button with dynamic breadcrumbs allowing drag-and-drop file movement. Upgraded file upload with XHR to accurately display real-time percentage progress bars.
+- **Deployment Preparation:** Implemented the `Dockerfile` and `.dockerignore` for containerized environments.
 
 ## 📅 Future Milestones
 - **Breadcrumbs & Advanced Dragging:** Show dynamic folder paths as breadcrumbs. Allow dragging files to the "Back" button (or any breadcrumb) to move them up a level.
