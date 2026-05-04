@@ -12,6 +12,7 @@ export default function FileGrid({ tab = "home" }: { tab?: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const folderId = searchParams.get("folderId");
+  const category = searchParams.get("category");
   
   const [files, setFiles] = useState([]);
   const [folders, setFolders] = useState([]);
@@ -32,15 +33,16 @@ export default function FileGrid({ tab = "home" }: { tab?: string }) {
     try {
       const qs = new URLSearchParams({ q, tab });
       if (folderId) qs.append("folderId", folderId);
+      if (category) qs.append("category", category);
       
       const [filesRes, foldersRes, pathRes] = await Promise.all([
         fetch(`/api/files?${qs.toString()}`),
-        !q ? fetch(`/api/folders?parentId=${folderId || ""}&tab=${tab}`) : Promise.resolve({ json: () => ({ folders: [] }) }),
-        !q && folderId && tab === "home" ? fetch(`/api/folders/path?id=${folderId}`) : Promise.resolve({ json: () => ({ path: [] }) })
+        !q && !category ? fetch(`/api/folders?parentId=${folderId || ""}&tab=${tab}`) : Promise.resolve({ json: () => ({ folders: [] }) }),
+        !q && !category && folderId && tab === "home" ? fetch(`/api/folders/path?id=${folderId}`) : Promise.resolve({ json: () => ({ path: [] }) })
       ]);
       
       const filesData = await filesRes.json();
-      const foldersData = !q ? await foldersRes.json() : { folders: [] };
+      const foldersData = !q && !category ? await foldersRes.json() : { folders: [] };
       const pathData = folderId ? await pathRes.json() : { path: [] };
       
       setFiles(filesData.files || []);
@@ -49,7 +51,7 @@ export default function FileGrid({ tab = "home" }: { tab?: string }) {
     } finally { 
       setLoading(false); 
     }
-  }, [tab, folderId]);
+  }, [tab, folderId, category]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -228,27 +230,35 @@ export default function FileGrid({ tab = "home" }: { tab?: string }) {
           
           {tab === "home" && !query && (
             <div className="flex items-center flex-1 overflow-x-auto whitespace-nowrap scrollbar-hide bg-white/30 dark:bg-black/20 px-3 py-1.5 rounded-lg border border-white/40 dark:border-white/10">
-               <div 
-                 onDragOver={(e) => e.preventDefault()}
-                 onDrop={(e) => handleFileDropToFolder(e, "")}
-                 onClick={() => router.push('/dashboard')}
-                 className="cursor-pointer font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors p-1"
-               >
-                 Home
-               </div>
-               {breadcrumbs.map((crumb, idx) => (
-                  <div key={crumb.id} className="flex items-center">
-                    <ChevronRight size={16} className="text-gray-400 mx-1" />
-                    <div
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => handleFileDropToFolder(e, crumb.id)}
-                      onClick={() => router.push(`/dashboard?folderId=${crumb.id}`)}
-                      className={`cursor-pointer font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors p-1 ${idx === breadcrumbs.length - 1 ? "text-blue-600 dark:text-blue-400" : ""}`}
-                    >
-                      {crumb.name}
-                    </div>
-                  </div>
-               ))}
+               {category ? (
+                 <div className="font-medium text-blue-600 dark:text-blue-400 capitalize p-1">
+                   {category === "pdf" ? "PDFs" : `${category}s`}
+                 </div>
+               ) : (
+                 <>
+                   <div 
+                     onDragOver={(e) => e.preventDefault()}
+                     onDrop={(e) => handleFileDropToFolder(e, "")}
+                     onClick={() => router.push('/dashboard')}
+                     className="cursor-pointer font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors p-1"
+                   >
+                     Home
+                   </div>
+                   {breadcrumbs.map((crumb, idx) => (
+                      <div key={crumb.id} className="flex items-center">
+                        <ChevronRight size={16} className="text-gray-400 mx-1" />
+                        <div
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e) => handleFileDropToFolder(e, crumb.id)}
+                          onClick={() => router.push(`/dashboard?folderId=${crumb.id}`)}
+                          className={`cursor-pointer font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors p-1 ${idx === breadcrumbs.length - 1 ? "text-blue-600 dark:text-blue-400" : ""}`}
+                        >
+                          {crumb.name}
+                        </div>
+                      </div>
+                   ))}
+                 </>
+               )}
             </div>
           )}
         </div>

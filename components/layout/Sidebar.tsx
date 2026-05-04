@@ -1,14 +1,19 @@
 "use client";
 import Link from "next/link";
-import { HardDrive, Share2, Trash2, LayoutGrid, LogOut, Moon, Sun } from "lucide-react";
+import { HardDrive, Share2, Trash2, LayoutGrid, LogOut, Moon, Sun, FileText, Image as ImageIcon, Video, File } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { signOut } from "next-auth/react";
 import { useEffect, useState, useCallback } from "react";
 import { formatBytes } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 
 const navItems = [
   { name: "Home", icon: LayoutGrid, href: "/dashboard" },
+  { name: "Documents", icon: FileText, href: "/dashboard?category=document" },
+  { name: "Images", icon: ImageIcon, href: "/dashboard?category=image" },
+  { name: "Videos", icon: Video, href: "/dashboard?category=video" },
+  { name: "PDFs", icon: File, href: "/dashboard?category=pdf" },
   { name: "Shared", icon: Share2, href: "/dashboard?tab=shared" },
   { name: "Trash", icon: Trash2, href: "/dashboard?tab=trash" },
 ];
@@ -41,6 +46,10 @@ export default function Sidebar() {
     return () => window.removeEventListener("upload_complete", handleUploadComplete);
   }, [fetchStorage]);
 
+  const searchParams = useSearchParams();
+  const category = searchParams?.get("category");
+  const tab = searchParams?.get("tab");
+
   return (
     <aside className="w-64 border-r border-white/20 dark:border-white/10 h-screen flex flex-col p-4 bg-white/40 dark:bg-black/30 backdrop-blur-2xl shadow-2xl z-20 relative">
       <h1 className="text-xl font-bold mb-6 flex items-center gap-2">
@@ -48,11 +57,18 @@ export default function Sidebar() {
       </h1>
       
       <nav className="flex-1 space-y-1">
-        {navItems.map((item) => (
-          <Link key={item.name} href={item.href} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-            <item.icon size={18} /> {item.name}
-          </Link>
-        ))}
+        {navItems.map((item) => {
+          const isActive = 
+            (item.name === "Home" && !category && !tab) || 
+            (category && item.href.includes(`category=${category}`)) || 
+            (tab && item.href.includes(`tab=${tab}`));
+            
+          return (
+            <Link key={item.name} href={item.href} className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-medium" : "hover:bg-gray-100 dark:hover:bg-gray-800"}`}>
+              <item.icon size={18} /> {item.name}
+            </Link>
+          );
+        })}
       </nav>
 
       <div className="mt-auto pt-6 border-t border-white/20 dark:border-white/10 space-y-4">
