@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { HardDrive, Share2, Trash2, LayoutGrid, LogOut, Moon, Sun, FileText, Image as ImageIcon, Video, File } from "lucide-react";
+import { HardDrive, Share2, Trash2, LayoutGrid, LogOut, Moon, Sun, FileText, Image as ImageIcon, Video, File, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { signOut } from "next-auth/react";
@@ -14,6 +14,7 @@ const navItems = [
   { name: "Images", icon: ImageIcon, href: "/dashboard?category=image" },
   { name: "Videos", icon: Video, href: "/dashboard?category=video" },
   { name: "PDFs", icon: File, href: "/dashboard?category=pdf" },
+  { name: "Starred", icon: Star, href: "/dashboard?tab=starred" },
   { name: "Shared", icon: Share2, href: "/dashboard?tab=shared" },
   { name: "Trash", icon: Trash2, href: "/dashboard?tab=trash" },
 ];

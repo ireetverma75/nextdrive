@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import FileCard from "./FileCard";
 import { Input } from "@/components/ui/input";
-import { Search, Folder, Plus, Upload as UploadIcon, Loader2, Trash2, RotateCcw, ChevronRight } from "lucide-react";
+import { Search, Folder, Plus, Upload as UploadIcon, Loader2, Trash2, RotateCcw, ChevronRight, LayoutGrid, List, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ export default function FileGrid({ tab = "home" }: { tab?: string }) {
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [creatingFolder, setCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   
   // Folder editing state
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
@@ -182,6 +183,24 @@ export default function FileGrid({ tab = "home" }: { tab?: string }) {
     }
   };
 
+  const handleToggleFolderStar = async (e: React.MouseEvent, folder: any) => {
+    e.stopPropagation();
+    try {
+      const action = folder.isStarred ? "unstar" : "star";
+      const res = await fetch(`/api/folders/${folder.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action })
+      });
+      if (res.ok) {
+        toast.success(folder.isStarred ? "Removed from Starred" : "Added to Starred");
+        fetchData(query);
+      }
+    } catch {
+      toast.error("Failed to update status");
+    }
+  };
+
   const handleFileDropToFolder = async (e: React.DragEvent, targetFolderId: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -265,6 +284,14 @@ export default function FileGrid({ tab = "home" }: { tab?: string }) {
         
         {tab === "home" && !query && (
           <div className="flex items-center gap-2">
+            <div className="flex items-center bg-white/20 dark:bg-black/20 rounded-lg p-1 border border-white/30 dark:border-white/10 mr-2">
+              <Button variant="ghost" size="sm" className={`h-8 w-8 p-0 ${viewMode === 'grid' ? 'bg-white/50 dark:bg-white/10 shadow-sm' : ''}`} onClick={() => setViewMode('grid')}>
+                <LayoutGrid size={16} />
+              </Button>
+              <Button variant="ghost" size="sm" className={`h-8 w-8 p-0 ${viewMode === 'list' ? 'bg-white/50 dark:bg-white/10 shadow-sm' : ''}`} onClick={() => setViewMode('list')}>
+                <List size={16} />
+              </Button>
+            </div>
             {creatingFolder ? (
               <form onSubmit={handleCreateFolder} className="flex items-center gap-2">
                 <Input 
@@ -319,7 +346,7 @@ export default function FileGrid({ tab = "home" }: { tab?: string }) {
           <p className="text-sm mt-1">Drag and drop files here or create a new folder</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className={viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" : "flex flex-col gap-2"}>
           {folders.map((folder: any) => (
             <div 
               key={folder.id} 
@@ -341,10 +368,10 @@ export default function FileGrid({ tab = "home" }: { tab?: string }) {
                   setEditingName(folder.name);
                 }
               }}
-              className="group relative flex flex-col justify-center items-center p-6 bg-white/40 dark:bg-black/30 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 aspect-square"
+              className={`group relative flex items-center p-4 bg-white/40 dark:bg-black/30 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer hover:bg-white/60 dark:hover:bg-black/50 ${viewMode === 'grid' ? 'flex-col justify-center aspect-square' : 'flex-row gap-4 h-16'}`}
             >
               {tab === "trash" ? (
-                 <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                 <div className={`absolute flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ${viewMode === 'grid' ? 'top-2 right-2' : 'right-4'}`}>
                    <Button size="icon" variant="ghost" className="h-7 w-7 text-green-500 hover:bg-green-100 dark:hover:bg-green-900/30" onClick={(e) => handleRestoreFolder(e, folder.id)}>
                      <RotateCcw size={14} />
                    </Button>
@@ -353,15 +380,18 @@ export default function FileGrid({ tab = "home" }: { tab?: string }) {
                    </Button>
                  </div>
               ) : (
-                 <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                   <Button size="icon" variant="ghost" className="h-7 w-7 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30" onClick={(e) => handleDeleteFolder(e, folder.id)}>
+                 <div className={`absolute flex gap-1 transition-opacity ${folder.isStarred ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} ${viewMode === 'grid' ? 'top-2 right-2' : 'right-4'}`}>
+                   <Button size="icon" variant="ghost" className={`h-7 w-7 ${folder.isStarred ? "text-yellow-500" : ""}`} onClick={(e) => handleToggleFolderStar(e, folder)}>
+                     <Star size={14} className={folder.isStarred ? "fill-yellow-500" : ""} />
+                   </Button>
+                   <Button size="icon" variant="ghost" className="h-7 w-7 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => handleDeleteFolder(e, folder.id)}>
                      <Trash2 size={14} />
                    </Button>
                  </div>
               )}
 
-              <div className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-full mb-3 group-hover:scale-110 transition-transform duration-300">
-                <Folder className="text-blue-500 fill-blue-500/20" size={32} />
+              <div className={`bg-blue-100 dark:bg-blue-900/30 rounded-full group-hover:scale-110 transition-transform duration-300 flex items-center justify-center ${viewMode === 'grid' ? 'p-4 mb-3' : 'w-10 h-10'}`}>
+                <Folder className="text-blue-500 fill-blue-500/20" size={viewMode === 'grid' ? 32 : 20} />
               </div>
               
               {editingFolderId === folder.id ? (
@@ -374,15 +404,15 @@ export default function FileGrid({ tab = "home" }: { tab?: string }) {
                     if (e.key === "Enter") handleRenameFolder(folder.id);
                     if (e.key === "Escape") setEditingFolderId(null);
                   }}
-                  className="h-8 text-center px-1 text-sm font-medium"
+                  className={`h-8 px-1 text-sm font-medium ${viewMode === 'grid' ? 'text-center' : 'w-64'}`}
                   onClick={(e) => e.stopPropagation()}
                 />
               ) : (
-                <span className="font-medium truncate w-full text-center px-2">{folder.name}</span>
+                <span className={`font-medium truncate ${viewMode === 'grid' ? 'w-full text-center px-2' : 'flex-1 text-left'}`}>{folder.name}</span>
               )}
             </div>
           ))}
-          {files.map((file: any) => <FileCard key={file.id} file={file} tab={tab} />)}
+          {files.map((file: any) => <FileCard key={file.id} file={file} tab={tab} viewMode={viewMode} />)}
         </div>
       )}
     </div>

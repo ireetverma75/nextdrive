@@ -53,6 +53,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       await db.update(files).set({ isTrashed: false }).where(eq(files.id, id)).returning();
     } else if (action === "move") {
       await db.update(files).set({ folderId: folderId || null }).where(eq(files.id, id)).returning();
+    } else if (action === "star") {
+      await db.update(files).set({ isStarred: true }).where(eq(files.id, id)).returning();
+    } else if (action === "unstar") {
+      await db.update(files).set({ isStarred: false }).where(eq(files.id, id)).returning();
     }
 
     return NextResponse.json({ success: true });

@@ -16,6 +16,7 @@ export const folders = sqliteTable("folders", {
   createdBy: text("createdBy").notNull().references(() => users.id),
   createdAt: integer("createdAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`),
   isTrashed: integer("isTrashed", { mode: 'boolean' }).default(false),
+  isStarred: integer("isStarred", { mode: 'boolean' }).default(false),
 });
 
 export const files = sqliteTable("files", {
@@ -29,4 +30,5 @@ export const files = sqliteTable("files", {
   folderId: text("folderId"),
   createdAt: integer("createdAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`),
   isTrashed: integer("isTrashed", { mode: 'boolean' }).default(false),
+  isStarred: integer("isStarred", { mode: 'boolean' }).default(false),
 });

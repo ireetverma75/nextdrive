@@ -28,11 +28,14 @@ export async function GET(req: Request) {
         like(files.fileType, "text/%"),
         like(files.fileType, "application/vnd.openxmlformats-officedocument.%"),
         eq(files.fileType, "application/msword")
-      )
+      )!
     );
 
     if (tab === "trash") {
       conditions.push(eq(files.isTrashed, true));
+    } else if (tab === "starred") {
+      conditions.push(eq(files.isTrashed, false));
+      conditions.push(eq(files.isStarred, true));
     } else {
       conditions.push(eq(files.isTrashed, false));
       if (!q && !category) {

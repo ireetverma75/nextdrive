@@ -51,6 +51,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       await db.update(folders).set({ isTrashed: false }).where(eq(folders.id, id)).returning();
     } else if (action === "rename" && name) {
       await db.update(folders).set({ name }).where(eq(folders.id, id)).returning();
+    } else if (action === "star") {
+      await db.update(folders).set({ isStarred: true }).where(eq(folders.id, id)).returning();
+    } else if (action === "unstar") {
+      await db.update(folders).set({ isStarred: false }).where(eq(folders.id, id)).returning();
     }
 
     return NextResponse.json({ success: true });

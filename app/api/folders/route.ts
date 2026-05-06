@@ -17,6 +17,9 @@ export async function GET(req: Request) {
     
     if (tab === "trash") {
       conditions.push(eq(folders.isTrashed, true));
+    } else if (tab === "starred") {
+      conditions.push(eq(folders.isTrashed, false));
+      conditions.push(eq(folders.isStarred, true));
     } else {
       conditions.push(eq(folders.isTrashed, false));
       if (parentId && parentId !== "null") {
