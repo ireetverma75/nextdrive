@@ -64,8 +64,8 @@ export default function Sidebar() {
             (tab && item.href.includes(`tab=${tab}`));
             
           return (
-            <Link key={item.name} href={item.href} className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-medium" : "hover:bg-gray-100 dark:hover:bg-gray-800"}`}>
-              <item.icon size={18} /> {item.name}
+            <Link key={item.name} href={item.href} className={`group flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-300 ${isActive ? "bg-blue-100/80 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-medium shadow-[inset_0px_0px_10px_rgba(59,130,246,0.2)]" : "hover:bg-white/60 dark:hover:bg-gray-800/50 hover:translate-x-2"}`}>
+              <item.icon size={18} className={`transition-transform duration-300 ${isActive ? 'scale-110 drop-shadow-sm' : 'group-hover:scale-110 group-hover:text-blue-500'}`} /> {item.name}
             </Link>
           );
         })}

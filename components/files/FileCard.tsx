@@ -62,10 +62,15 @@ export default function FileCard({ file, tab = "home" }: { file: any, tab?: stri
     <div 
       draggable={true}
       onDragStart={(e) => { e.dataTransfer.setData('fileId', file.id); }}
-      className="group relative bg-white/50 dark:bg-black/40 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-xl p-4 shadow-lg hover:shadow-2xl hover:bg-white/60 dark:hover:bg-black/50 hover:-translate-y-1 transition-all duration-300 flex flex-col"
+      className="group relative bg-white/50 dark:bg-black/40 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-xl p-4 shadow-lg hover:shadow-blue-500/20 dark:hover:shadow-blue-500/10 hover:bg-white/70 dark:hover:bg-black/60 hover:-translate-y-2 transition-all duration-500 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-500"
     >
-      <div className="h-32 bg-white/50 dark:bg-white/5 shadow-inner backdrop-blur-sm rounded-lg flex items-center justify-center mb-3">
-        {getIcon()}
+      {/* Shine effect on hover */}
+      <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-0 pointer-events-none" />
+      
+      <div className="relative z-10 h-32 bg-white/50 dark:bg-white/5 shadow-inner backdrop-blur-sm rounded-lg flex items-center justify-center mb-3 group-hover:bg-blue-50/50 dark:group-hover:bg-blue-900/20 transition-colors duration-500 overflow-hidden">
+        <div className="transform group-hover:scale-125 group-hover:rotate-3 transition-all duration-500 drop-shadow-xl">
+          {getIcon()}
+        </div>
       </div>
       <h3 className="font-medium truncate text-sm">{file.filename}</h3>
       <p className="text-xs text-gray-500 mb-2">{new Date(file.createdAt).toLocaleDateString()}</p>
